@@ -17,7 +17,7 @@ function instalar_servicios() {
     echo "  4. Instalar Wordpress"
     echo "  5. Instalar Moodle"
     echo "  6. Instalar Minecraft"
-    echo "  7. Instalar todo"
+    echo "  7. Instalar todo (menos Minecraft)"
     read -p "Selecciona una opción: " OPCION_USUARIO
 
     case $OPCION_USUARIO in
