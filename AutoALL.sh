@@ -1,14 +1,31 @@
-AutoALL.sh
 #!/bin/bash
 #------------AutoALL------------#
+set -e
+
+# Colores para mensajes
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m' # Sin color
+
+# Función para mostrar errores y salir
+function error_exit() {
+    echo -e "${RED}$1${NC}" >&2
+    exit 1
+}
+
+# Verificar si se ejecuta como root
 if [[ $EUID -ne 0 ]]; then
     error_exit "Este script debe ejecutarse como root. Usa sudo."
 fi
 
-instalar_servicios
-
+# Función principal para instalar servicios
 function instalar_servicios() {
+    if [[ ! -d "scripts" ]]; then
+        error_exit "El directorio 'scripts' no existe. Asegúrate de estar en el directorio correcto."
+    fi
+
     cd scripts
+
     echo -e "${GREEN}Instala los siguientes servicios...${NC}"
     echo "Opciones:"
     echo "  1. Instalar SAMBA"
@@ -24,12 +41,12 @@ function instalar_servicios() {
         1)
             echo -e "${GREEN}Instalando SAMBA...${NC}"
             chmod +x ./AutoSamba.sh
-            /AutoSamba.sh
+            ./AutoSamba.sh -i
             ;;
         2)
             echo -e "${GREEN}Instalando DNS...${NC}"
             chmod +x ./AutoDNS.sh
-            ./AutoDNS.sh
+            ./AutoDNS.sh -i
             ;;
         3)
             echo -e "${GREEN}Instalando DHCP...${NC}"
@@ -50,18 +67,17 @@ function instalar_servicios() {
             echo -e "${GREEN}Instalando Minecraft...${NC}"
             chmod +x ./AutoMinecraft.sh
             ./AutoMinecraft.sh
-
             ;;
         7)
-            echo -e "${GREEN}Instalando todo(Menos minecraft)...${NC}"
+            echo -e "${GREEN}Instalando todo (menos Minecraft)...${NC}"
             chmod +x ./AutoSamba.sh
             chmod +x ./AutoDNS.sh
             chmod +x ./AutoDHCP.sh
             chmod +x ./AutoWordpress.sh
             chmod +x ./AutoMoodle.sh
-            ./AutoDNS.sh
+            ./AutoSamba.sh -i
+            ./AutoDNS.sh -i
             ./AutoDHCP.sh
-            ./AutoSamba.sh
             ./AutoWordpress.sh
             ./AutoMoodle.sh
             ;;
@@ -70,3 +86,6 @@ function instalar_servicios() {
             ;;
     esac
 }
+
+# Ejecutar función principal
+instalar_servicios
